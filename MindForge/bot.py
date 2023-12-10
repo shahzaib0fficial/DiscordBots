@@ -7,8 +7,8 @@ def readHidden(file_path="hidden.json"):
         hidden = json.load(file)
     return hidden
 
-config = readHidden()
-botToken = config["botToken"]
+hidden = readHidden()
+botToken = hidden["botToken"]
 
 async def sendMessage(message,userMessage,isPrivate):
     try:
