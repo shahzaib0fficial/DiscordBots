@@ -1,5 +1,14 @@
 import discord
 import responses
+import json
+
+def readHidden(file_path="hidden.json"):
+    with open(file_path, "r") as file:
+        hidden = json.load(file)
+    return hidden
+
+config = readHidden()
+botToken = config["botToken"]
 
 async def sendMessage(message,userMessage,isPrivate):
     try:
@@ -9,7 +18,7 @@ async def sendMessage(message,userMessage,isPrivate):
         print(e)
 
 def runDiscordBot():
-    TOKEN = 'MTE4MzI5ODM2NTA2MTA4NzMwMg.G3UNLJ.z_Qq0PlrWmWHi-oPW4FXDCMbqtuj3N960ZqUNA'
+    TOKEN = botToken
 
     # Create an instance of Intents
     intents = discord.Intents.all()
