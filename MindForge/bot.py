@@ -18,7 +18,6 @@ async def sendMessage(message,userMessage,isPrivate):
         print(e)
 
 def runDiscordBot():
-    TOKEN = botToken
 
     # Create an instance of Intents
     intents = discord.Intents.all()
@@ -46,4 +45,4 @@ def runDiscordBot():
         else:
             await sendMessage(message, userMessage,isPrivate=False)
 
-    client.run(TOKEN)
+    client.run(botToken)

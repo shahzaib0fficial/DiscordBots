@@ -1,5 +1,7 @@
 import random
 
+data = {}
+
 def handleUserResponse(message):
     
     #converting user message to lower case
