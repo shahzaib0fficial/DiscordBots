@@ -2,6 +2,13 @@ import discord
 import requests
 import json
 
+file = open("data.json","r")
+
+data = json.load(file)
+
+Token = data["Token"]
+ApiKey = data["ApiKey"]
+
 intents = discord.Intents.all()
 
 client = discord.Client(intents=intents)
@@ -25,7 +32,24 @@ def randomQuote():
         return quote
     else:
         return "Sorry there is a bit issue with fetching quote we'll fix soon"
-    
+
+def randomFact():
+    response = requests.get('https://api.api-ninjas.com/v1/facts?limit={}'.format(1),headers={'X-Api-Key':ApiKey})
+    if response.status_code == 200:
+        jsonData = json.loads(response.text)
+        fact = jsonData[0]["fact"]
+        return fact
+
+def cityInfo(name):
+    response = requests.get('https://api.api-ninjas.com/v1/city?name={}'.format(name),headers={'X-Api-Key':ApiKey})
+    if response.status_code == 200:
+        jsonData = json.loads(response.text)
+        if jsonData:
+            info = f"Name: {jsonData[0]['name']} \nLatitude: {jsonData[0]['latitude']} \nLongitude: {jsonData[0]['longitude']} \nCountary: {jsonData[0]['country']} \nPopulation: {jsonData[0]['population']} \nIs Capital:{jsonData[0]['is_capital']}"
+            return info
+        else:
+            return f"There is no any city with the name of {name}"
+
 async def sendMessage(message,userMessage,isPrivate):
     if isPrivate:
         messageDestination = message.author
@@ -43,8 +67,17 @@ async def sendMessage(message,userMessage,isPrivate):
         joke = randomJoke()
         await messageDestination.send(joke)
 
+    elif userMessage.startswith("fact"):
+        fact = randomFact()
+        await messageDestination.send(fact)
+
+    elif userMessage.startswith("city"):
+        name = userMessage[5:]
+        info = cityInfo(name)
+        await messageDestination.send(info)
+
     elif userMessage.startswith("commands"):
-        await messageDestination.send("1. Hello or Hi\n2. Inspire\n3. Joke\n4. When you are feeling\n  1. sad\n  2. depressed\n  3. unhappy\n  4. miserable\n  5. gloomy\n  6. heartbroken\n  7. tearful\n  8. melancholy\n  9. despair\n  10. lonely\nBot will tell you a joke\n5. commands\n6. use '?' in start to get message in dm")
+        await messageDestination.send("**<---Commands--->**\n1. Hello or Hi\n2. Inspire\n3. fact\n4. Joke\n5. When you are feeling\n  1. sad\n  2. depressed\n  3. unhappy\n  4. miserable\n  5. gloomy\n  6. heartbroken\n  7. tearful\n  8. melancholy\n  9. despair\n  10. lonely\nBot will tell you a joke\n6. city name of city\n7. commands\n8. use '?' in start to get message in dm")
 
 @client.event
 async def on_ready():
@@ -65,13 +98,5 @@ async def on_message(message):
         await sendMessage(message,userMessage,isPrivate=True)
     else:
         await sendMessage(message,userMessage,isPrivate=False)
-
-    
-
-file = open("data.json","r")
-
-data = json.load(file)
-
-Token = data["Token"]
 
 client.run(Token)
